@@ -18,7 +18,8 @@ describe TermsList do
     @list.should be_a AMEE::DataAbstraction::TermsList
   end
 
-  it "full list should be homogeneous" do
+  it "full list should not be analogous" do
+    # includes :usage AND :co2 terms
     @list.should_not be_analogous
     @list.all? {|term| term.is_a? AMEE::DataAbstraction::Output }.should be_false
   end
@@ -43,15 +44,20 @@ describe TermsList do
     @list.co2.should be_homogeneous_per_units
   end
   
-  it "should recognize consistent units" do
+  it "should recognize non-consistent units" do
     @list.co2.first.unit 'lb'
     @list.co2[1].per_unit 'h'
+    @list.co2.should be_analogous
     @list.co2.should_not be_homogeneous
     @list.co2.should_not be_homogeneous_units
     @list.co2.should_not be_homogeneous_per_units
   end
 
-  it "should standardize term units with predominant units" do
+  it "should raise error when standardizing units on non-analogous list" do
+    lambda{@list.standardize_units}.should raise_error
+  end
+
+  it "should standardize term units with predominant units and convert values appropriately if no unit specified" do
     @list.co2.first.unit 'lb'
     @list.co2.first.value.should eql 240
     @list.co2.should_not be_homogeneous
@@ -59,13 +65,90 @@ describe TermsList do
     list = @list.co2.standardize_units
     list.should be_homogeneous
     list.should be_homogeneous_units
-    list.first.unit 't'
+    list.first.unit.label.should eql  't'
     list.first.value.should be_close 0.1088621688,0.001
   end
 
-  it "should standardize term units" do
+  it "should standardize term per units with predominant per units and convert values appropriately if no per unit specified" do
+    @list.co2.each {|term| term.per_unit 'h'}
     @list.co2.first.per_unit 'min'
-    @list.co2[1].per_unit 'h'
+    @list.co2.first.value.should eql 240
+    @list.co2.should_not be_homogeneous
+    @list.co2.should_not be_homogeneous_per_units
+    list = @list.co2.standardize_units
+    list.should be_homogeneous
+    list.should be_homogeneous_per_units
+    list.first.per_unit.label.should eql  'h'
+    list.first.value.should be_close 14400,0.001
+  end
+
+  it "should standardize term units AND per units with predominant units and convert values appropriately if no units specified" do
+    @list.co2.each {|term| term.per_unit 'h'}
+    @list.co2.first.per_unit 'min'
+    @list.co2.first.unit 'lb'
+    @list.co2.first.value.should eql 240
+    @list.co2.should_not be_homogeneous
+    @list.co2.should_not be_homogeneous_units
+    @list.co2.should_not be_homogeneous_per_units
+    list = @list.co2.standardize_units
+    list.should be_homogeneous
+    list.should be_homogeneous_units
+    list.should be_homogeneous_per_units
+    list.first.unit.label.should eql 't'
+    list.first.per_unit.label.should eql  'h'
+    list.first.value.should be_close 6.531730128,0.001
+  end
+
+  it "should standardize term units with specfied units and convert values appropriately" do
+    @list.co2.first.unit 'lb'
+    @list.co2.first.value.should eql 240
+    @list.co2[1].value.should eql 480
+    @list.co2.should_not be_homogeneous
+    @list.co2.should_not be_homogeneous_units
+    list = @list.co2.standardize_units(:lb)
+    list.should be_homogeneous
+    list.should be_homogeneous_units
+    list.first.unit.label.should eql  'lb'
+    list[1].unit.label.should eql  'lb'
+    list.first.value.should eql 240.0
+    list[1].value.should be_close 1058218.85848741,0.001
+  end
+
+  it "should standardize term per units with specfied per units and convert values appropriately" do
+    @list.co2.each {|term| term.per_unit 'h'}
+    @list.co2.first.per_unit 'min'
+    @list.co2.first.value.should eql 240
+    @list.co2[1].value.should eql 480
+    @list.co2.should_not be_homogeneous
+    @list.co2.should_not be_homogeneous_per_units
+    list = @list.co2.standardize_units(nil,:min)
+    list.should be_homogeneous
+    list.should be_homogeneous_per_units
+    list.first.per_unit.label.should eql 'min'
+    list[1].per_unit.label.should eql  'min'
+    list.first.value.should eql 240.0
+    list[1].value.should be_close 8,0.001
+  end
+
+  it "should standardize term units AND per units with specfied units AND per units and convert values appropriately" do
+    @list.co2.each {|term| term.per_unit 'h'}
+    @list.co2.first.unit 'lb'
+    @list.co2.first.per_unit 'min'
+    @list.co2.first.value.should eql 240
+    @list.co2[1].value.should eql 480
+    @list.co2.should_not be_homogeneous
+    @list.co2.should_not be_homogeneous_units
+    @list.co2.should_not be_homogeneous_per_units
+    list = @list.co2.standardize_units(:lb,:min)
+    list.should be_homogeneous
+    list.should be_homogeneous_units
+    list.should be_homogeneous_per_units
+    list.first.unit.label.should eql 'lb'
+    list.first.per_unit.label.should eql 'min'
+    list[1].unit.label.should eql 'lb'
+    list[1].per_unit.label.should eql  'min'
+    list.first.value.should eql 240.0
+    list[1].value.should be_close 17636.9809747902,0.001
   end
 
   it "should sum terms" do
@@ -90,9 +173,90 @@ describe TermsList do
     @list.co2.mean.to_s.should eql "440.0 t"
   end
 
+  it "should recognize numeric terms" do
+    @list.should_not be_numeric
+    @list.co2.should be_numeric
+    @list.usage.should be_numeric
+    @list.country.should_not be_numeric
+  end
+
+  it "should return median of numeric list" do
+    @list.co2.median.to_s.should eql "480 t"
+  end
+
+  it "should return median of numeric list" do
+    @list.usage.median.to_s.should eql "1000 kWh"
+  end
+
+  it "should return median of non-numeric list" do
+    calcs = []
+    calcs << add_transport_calc(500,240)
+    calcs << add_transport_calc(1000,480)
+    calcs << add_transport_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list = @coll.terms.type
+    @list.each {|term| term.value "car"}
+    @list.median.to_s.should eql "car"
+    @list.first.value "van"
+    @list[1].value "motorbike"
+    @list.last.value "lorry"
+    @list.median.to_s.should eql "motorbike"
+  end
+
+  it "should return mode of numeric list" do
+    calcs = []
+    calcs << add_transport_calc(500,240)
+    calcs << add_transport_calc(1000,480)
+    calcs << add_transport_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list = @coll.terms.type
+    @list.each {|term| term.value "car"}
+    @list.mode.to_s.should eql "car"
+    @list.first.value "van"
+    @list[1].value "van"
+    @list.last.value "lorry"
+    @list.mode.to_s.should eql "van"
+  end
+
+  it "should return nil for mode of list with some equal frequencies" do
+    calcs = []
+    calcs << add_transport_calc(500,240)
+    calcs << add_transport_calc(1000,480)
+    calcs << add_transport_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list = @coll.terms.type
+    @list.each {|term| term.value "car"}
+    @list.mode.to_s.should eql "car"
+    @list.first.value "van"
+    @list[1].value "motorbike"
+    @list.last.value "lorry"
+    @list.mode.should be_nil
+    @list.mode.to_s.should eql ""
+  end
+
+  it "should return mode of non numeric list" do
+    @list.usage.first.value 1000
+    @list.usage.mode.to_s.should eql "1000 kWh"
+  end
+
   it "should discover predominant unit" do
     @list.co2.predominant_unit.should eql 't'
     @list.usage.predominant_unit.should eql 'kWh'
+    @list.co2.first.unit 'kg'
+    @list.co2.predominant_unit.should eql 't'
+    @list.co2.last.unit 'kg'
+    @list.co2.predominant_unit.should eql 'kg'
+  end
+
+  it "should discover predominant per unit" do
+    @list.co2.each {|term| term.per_unit 'h'}
+    @list.usage.each {|term| term.per_unit 'm^2'}
+    @list.co2.predominant_per_unit.should eql 'h'
+    @list.usage.predominant_per_unit.should eql 'm^2'
+    @list.co2.first.per_unit 'min'
+    @list.co2.predominant_per_unit.should eql 'h'
+    @list.co2.last.per_unit 'min'
+    @list.co2.predominant_per_unit.should eql 'min'
   end
 
   it "should sort by value changing list in place" do
@@ -124,8 +288,6 @@ describe TermsList do
     list.last.value.should eql 600
   end
 
-  it "should return median of list" do
-    @list.co2.median.to_s.should eql "480 t"
-  end
+  
 end
 
