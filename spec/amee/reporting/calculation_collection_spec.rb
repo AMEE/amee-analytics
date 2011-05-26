@@ -100,5 +100,17 @@ describe CalculationCollection do
     coll.first['co2'].unit 'lb'
     coll.first['co2'].value.should be_close 529109.429243706,0.01
   end
+
+  it "should handle 'type' as a terms filter" do
+    calcs = []
+    calcs << add_transport_calc(500,240)
+    calcs << add_transport_calc(1000,480)
+    calcs << add_transport_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @coll.each { |calc| calc['type'].value "car" }
+    terms = @coll.type
+    terms.should be_a TermsList
+    terms.values.all? {|val| val == "car"}.should be_true
+  end
 end
 

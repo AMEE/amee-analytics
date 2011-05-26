@@ -54,6 +54,16 @@ module AMEE
         delegate sel,:to=>:terms
       end
 
+      # We want to be be able to dynamically retrieve subsets of terms via their
+      # labels. This is enabled by the first #method_missing method. However, #type
+      # (which is a common path in AMEE categories) is a special case in ruby and
+      # returns the class of the receiver (although this is deprecated). Therefore,
+      # this method overrides that behaviour for the TermsList class only
+      #
+      def type
+        terms.type
+      end
+
       def method_missing(method, *args, &block)
         if terms.labels.include? method.to_sym
           terms.send(method.to_sym)
