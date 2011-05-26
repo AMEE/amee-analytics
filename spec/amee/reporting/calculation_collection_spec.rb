@@ -61,6 +61,44 @@ describe CalculationCollection do
     @coll.usage.sum.to_s.should eql "2734.0 kWh"
   end
 
-  
+  it "should sort self by specified term" do
+    @coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+    @coll.reverse!
+    @coll.inspect.should eql "[electricity : [\"Argentina\",1234,600], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",500,240]]"
+    @coll.sort_by_co2!
+    @coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+    @coll.reverse!
+    @coll.inspect.should eql "[electricity : [\"Argentina\",1234,600], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",500,240]]"
+    @coll.sort_by_usage!
+    @coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+  end
+
+  it "should sort by specified term and return new" do
+    @coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+    @coll.reverse!
+    @coll.inspect.should eql "[electricity : [\"Argentina\",1234,600], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",500,240]]"
+    coll = @coll.sort_by_co2
+    coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+    @coll.inspect.should eql "[electricity : [\"Argentina\",1234,600], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",500,240]]"
+    coll = @coll.sort_by_usage
+    coll.inspect.should eql "[electricity : [\"Argentina\",500,240], electricity : [\"Argentina\",1000,480], electricity : [\"Argentina\",1234,600]]"
+  end
+
+  it "should standardize units in place" do
+    @coll.first['usage'].unit 'J'
+    @coll.first['usage'].value.should eql 500
+    @coll.first['usage'].unit.label.should eql 'J'
+    @coll.standardize_units!(:usage,:kWh)
+    @coll.first['usage'].unit 'kWh'
+    @coll.first['usage'].value.should be_close 0.000138888888888889,0.000001
+  end
+
+  it "should standardize units returning new collection" do
+    @coll.first['co2'].value.should eql 240
+    @coll.first['co2'].unit.label.should eql 't'
+    coll = @coll.standardize_units(:co2,:lb)
+    coll.first['co2'].unit 'lb'
+    coll.first['co2'].value.should be_close 529109.429243706,0.01
+  end
 end
 

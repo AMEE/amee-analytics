@@ -1,4 +1,4 @@
-require 'pp'
+
 module AMEE
   module DataAbstraction
     module TermsListReportingSupport
@@ -57,10 +57,8 @@ module AMEE
 
       def standardize_units(unit=nil,per_unit=nil)
         raise InvalidUnits, "#{self.class} contains multiple term types: #{labels.uniq.join(", ")}" unless analogous?
-
         return self if homogeneous? and ((unit.nil? or (first.unit and first.unit.label == unit)) and
            (per_unit.nil? or (first.per_unit and first.per_unit.label == per_unit)))
-
         unit = predominant_unit if unit.nil?
         per_unit = predominant_per_unit if per_unit.nil?
         new_terms = map { |term| term.convert_unit(:unit => unit, :per_unit => per_unit) }
@@ -121,6 +119,14 @@ module AMEE
         Result.new { label label; value value; unit unit; per_unit per_unit }
       end
 
+      def sort_by!(attr)
+        sort! { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+      end
+
+      def sort_by(attr)
+        sort { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+      end
+
       # We want to be be able to dynamically retrieve subsets of terms via their
       # labels. This is enabled by the first #method_missing method. However, #type
       # (which is a common path in AMEE categories) is a special case in ruby and
@@ -135,9 +141,9 @@ module AMEE
         if labels.include? method
           TermsList.new select{ |x| x.label == method }
         elsif method.to_s =~ /sort_by_(.*)!/ and self.class::TermProperties.include? $1.to_sym
-          sort! { |term,other_term| term.send($1.to_sym) <=> other_term.send($1.to_sym) }
+          sort_by! $1.to_sym
         elsif method.to_s =~ /sort_by_(.*)/ and self.class::TermProperties.include? $1.to_sym
-          sort { |term,other_term| term.send($1.to_sym) <=> other_term.send($1.to_sym) }
+          sort_by $1.to_sym
         else
           super
         end
