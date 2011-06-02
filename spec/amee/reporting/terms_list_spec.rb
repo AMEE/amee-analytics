@@ -174,10 +174,10 @@ describe TermsList do
   end
 
   it "should recognize numeric terms" do
-    @list.should_not be_numeric
-    @list.co2.should be_numeric
-    @list.usage.should be_numeric
-    @list.country.should_not be_numeric
+    @list.should_not be_all_numeric
+    @list.co2.should be_all_numeric
+    @list.usage.should be_all_numeric
+    @list.country.should_not be_all_numeric
   end
 
   it "should return median of numeric list" do

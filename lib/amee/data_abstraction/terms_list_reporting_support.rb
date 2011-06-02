@@ -37,10 +37,6 @@ module AMEE
         first.label unless heterogeneous?
       end
 
-      def numeric?
-        all? { |term| term.value.is_a? Numeric }
-      end
-
       def predominant_unit
         terms = reject { |term| term.unit.nil? }
         unit = terms.group_by { |term| term.unit.label }.
@@ -54,9 +50,17 @@ module AMEE
           max {|a,b| a.last.size <=> b.last.size }.first unless terms.blank?
         return unit
       end
+      
+      def all_numeric?
+        all? { |term| term.has_numeric_value? }
+      end
+
+      def numeric_terms
+        TermsList.new select { |term| term.has_numeric_value? }
+      end
 
       def standardize_units(unit=nil,per_unit=nil)
-        raise InvalidUnits, "#{self.class} contains multiple term types: #{labels.uniq.join(", ")}" unless analogous?
+        raise AMEE::DataAbstraction::Exceptions::InvalidUnits, "#{self.class} contains multiple term types: #{labels.uniq.join(", ")}" unless analogous?
         return self if homogeneous? and ((unit.nil? or (first.unit and first.unit.label == unit)) and
            (per_unit.nil? or (first.per_unit and first.per_unit.label == per_unit)))
         unit = predominant_unit if unit.nil?
@@ -66,17 +70,15 @@ module AMEE
       end
       
       def sum(unit=nil,per_unit=nil)
-        return nil unless numeric?
         unit = predominant_unit if unit.nil?
         per_unit = predominant_per_unit if per_unit.nil?
-        value = standardize_units(unit,per_unit).inject(0.0) do |sum,term|
+        value = numeric_terms.standardize_units(unit,per_unit).inject(0.0) do |sum,term|
           sum + term.value
         end
         initialize_result(label,value,unit,per_unit)
       end
       
       def mean(unit=nil,per_unit=nil)
-        return nil unless numeric?
         sum = sum(unit,per_unit)
         initialize_result(sum.label,(sum.value/size),sum.unit,sum.per_unit)
       end
