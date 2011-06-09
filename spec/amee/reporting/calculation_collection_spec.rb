@@ -112,5 +112,6 @@ describe CalculationCollection do
     terms.should be_a TermsList
     terms.values.all? {|val| val == "car"}.should be_true
   end
+
 end
 

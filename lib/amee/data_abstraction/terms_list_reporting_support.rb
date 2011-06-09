@@ -5,7 +5,7 @@ module AMEE
 
       # Do all terms represent the same thing?
       def analogous?
-        labels.uniq.size == 1
+        labels.uniq.size == (1 or nil)
       end
 
       # Do all terms represent the same thing AND contain consistent units?
@@ -60,7 +60,6 @@ module AMEE
       end
 
       def standardize_units(unit=nil,per_unit=nil)
-        raise AMEE::DataAbstraction::Exceptions::InvalidUnits, "#{self.class} contains multiple term types: #{labels.uniq.join(", ")}" unless analogous?
         return self if homogeneous? and ((unit.nil? or (first.unit and first.unit.label == unit)) and
            (per_unit.nil? or (first.per_unit and first.per_unit.label == per_unit)))
         unit = predominant_unit if unit.nil?
@@ -122,11 +121,15 @@ module AMEE
       end
 
       def sort_by!(attr)
-        sort! { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+        replace(sort_by(attr))
       end
 
+      # Remove unset terms before sort and append at end
       def sort_by(attr)
-        sort { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+        unset_terms = select { |term| term.unset? }
+        set_terms = select { |term| term.set? }
+        set_terms.sort! { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+        TermsList.new(set_terms + unset_terms)
       end
 
       # We want to be be able to dynamically retrieve subsets of terms via their

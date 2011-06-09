@@ -273,7 +273,6 @@ describe TermsList do
     @list.last.value.should eql 600
   end
 
-
   it "should sort by value creating new list" do
     @list=@list.co2
     @list.first.value.should eql 240
@@ -287,6 +286,55 @@ describe TermsList do
     list[1].value.should eql 480
     list.last.value.should eql 600
   end
+
+  it "should sort by value even if nil values present" do
+    calcs = []
+    calcs << add_transport_calc(500,240)
+    calcs << add_transport_calc(1000,480)
+    calcs << add_transport_calc(nil,nil)
+    calcs << add_transport_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list = @coll.co2
+    @list.first.value.should eql 240
+    @list[1].value.should eql 480
+    @list[2].value.should eql nil
+    @list.last.value.should eql 600
+    @list.reverse!
+    @list.first.value.should_not eql 240
+    @list.last.value.should_not eql 600
+    @list.sort_by_value!
+    @list.first.value.should eql 240
+    @list[1].value.should eql 480
+    @list[2].value.should eql 600
+    @list.last.value.should eql nil
+  end
+
+  it "should return self on sort if all nil values present" do
+    calcs = []
+    calcs << add_transport_calc(nil,nil)
+    calcs << add_transport_calc(nil,nil)
+    calcs << add_transport_calc(nil,nil)
+    calcs << add_transport_calc(nil,nil)
+    @coll = CalculationCollection.new calcs
+    @list = @coll.co2
+    @list.first.value.should eql nil
+    @list[1].value.should eql nil
+    @list[2].value.should eql nil
+    @list.last.value.should eql nil
+    @list.reverse!
+    @list.first.value.should eql nil
+    @list.last.value.should eql nil
+    @list.sort_by_value!
+    @list.first.value.should eql nil
+    @list[1].value.should eql nil
+    @list[2].value.should eql nil
+    @list.last.value.should eql nil
+  end
+
+  it "should return a new TermList for numeric only terms" do
+    @list=@list.co2.numeric_terms.should be_a TermsList
+  end
+
 
   
 end
