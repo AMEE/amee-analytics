@@ -24,7 +24,7 @@ describe CalculationCollection do
     @coll.should_not be_heterogeneous
   end
 
-  it "should be homogeneous" do
+  it "should be heterogeneous" do
     @coll << add_transport_calc(1000,231)
     @coll.should_not be_homogeneous
     @coll.should be_heterogeneous

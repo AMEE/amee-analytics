@@ -203,7 +203,7 @@ describe TermsList do
     @list.median.to_s.should eql "motorbike"
   end
 
-  it "should return mode of numeric list" do
+  it "should return mode of non numeric list" do
     calcs = []
     calcs << add_transport_calc(500,240)
     calcs << add_transport_calc(1000,480)
@@ -218,7 +218,7 @@ describe TermsList do
     @list.mode.to_s.should eql "van"
   end
 
-  it "should return nil for mode of list with some equal frequencies" do
+  it "should return a TermsList for mode of list with some equal frequencies" do
     calcs = []
     calcs << add_transport_calc(500,240)
     calcs << add_transport_calc(1000,480)
@@ -230,11 +230,11 @@ describe TermsList do
     @list.first.value "van"
     @list[1].value "motorbike"
     @list.last.value "lorry"
-    @list.mode.should be_nil
-    @list.mode.to_s.should eql ""
+    @list.mode.should be_a TermsList
+    @list.mode.size.should eql 3
   end
 
-  it "should return mode of non numeric list" do
+  it "should return mode of numeric list" do
     @list.usage.first.value 1000
     @list.usage.mode.to_s.should eql "1000 kWh"
   end

@@ -6,4 +6,3 @@ module AMEE
     end
   end
 end
-22

@@ -1,11 +1,5 @@
-if defined?(AMEE::DataAbstraction::CalculationCollection)
-  AMEE::DataAbstraction::CalculationCollection.class_eval { include AMEE::DataAbstraction::CalculationCollectionReportingSupport }
-end
+require 'amee-data-abstraction'
 
-if defined?(AMEE::DataAbstraction::TermsList)
-  AMEE::DataAbstraction::TermsList.class_eval { include AMEE::DataAbstraction::TermsListReportingSupport }
-end
-
-if defined?(AMEE::DataAbstraction::Term)
-  AMEE::DataAbstraction::Term.class_eval { include AMEE::DataAbstraction::TermReportingSupport }
-end
+::AMEE::DataAbstraction::CalculationCollection.class_eval { include AMEE::DataAbstraction::CalculationCollectionReportingSupport }
+::AMEE::DataAbstraction::TermsList.class_eval { include AMEE::DataAbstraction::TermsListReportingSupport }
+::AMEE::DataAbstraction::Term.class_eval { include AMEE::DataAbstraction::TermReportingSupport }
