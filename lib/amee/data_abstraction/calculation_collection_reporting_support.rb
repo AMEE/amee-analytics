@@ -1,5 +1,5 @@
 #
-# Authors::   James Hetherington, James Smith, Andrew Berkeley, George Palmer
+# Authors::   James Smith, Andrew Berkeley
 # Copyright:: Copyright (c) 2011 AMEE UK Ltd
 # License::   Permission is hereby granted, free of charge, to any person obtaining
 #             a copy of this software and associated documentation files (the

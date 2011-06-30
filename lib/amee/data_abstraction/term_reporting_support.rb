@@ -1,5 +1,5 @@
-#
-# Authors::   James Hetherington, James Smith, Andrew Berkeley, George Palmer
+
+# Authors::   James Smith, Andrew Berkeley
 # Copyright:: Copyright (c) 2011 AMEE UK Ltd
 # License::   Permission is hereby granted, free of charge, to any person obtaining
 #             a copy of this software and associated documentation files (the
@@ -24,6 +24,7 @@
 
 module AMEE
   module DataAbstraction
+    
     # Mixin module for the <i>AMEE::DataAbstraction::Term</i> class, providing
     # methods for handling collections of calculations.
     #
@@ -37,15 +38,15 @@ module AMEE
       # To specify a new per_unit, pass the required per unit via the
       # <tt>:per_unit</tt> key. E.g.,
       #
-      #   my_term.convert_unit :unit => :kg
+      #   my_term.convert_unit(:unit => :kg)
       #
-      #   my_term.convert_unit :unit => :kg, per_unit => :h
+      #   my_term.convert_unit(:unit => :kg, :per_unit => :h)
       #
-      #   my_term.convert_unit :unit => 'kilogram'
+      #   my_term.convert_unit(:unit => 'kilogram')
       #
-      #   my_term.convert_unit :unit => Unit.kg
+      #   my_term.convert_unit(:per_unit => Quantify::Unit.h)
       #
-      #   my_term.convert_unit :unit => <Quantify::Unit::SI ... >
+      #   my_term.convert_unit(:unit => <Quantify::Unit::SI ... >)
       #
       # If <tt>self</tt> does not hold a numeric value or either a unit or per
       # unit attribute, <tt.self</tt> is returned.
@@ -66,6 +67,17 @@ module AMEE
           new.per_unit options[:per_unit]
         end
         return new
+      end
+
+      # Returns an instance of <i>Result</i> based upon the attributes of
+      # <tt>self</tt>.
+      #
+      def to_result
+        result_term = Result.new
+        TermsList::TermProperties.each do |attr|
+          result_term.send(attr, self.send(attr))
+        end
+        return result_term
       end
      
     end

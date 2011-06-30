@@ -169,6 +169,10 @@ describe TermsList do
     @list.co2.sum(:lb).to_s.should eql "2381521.54102592 lb"
   end
 
+  it "should return 0.0 if no numerical term values found" do
+    @list.country.sum.to_s.should eql "0.0"
+  end
+
   it "should average terms" do
     @list.co2.mean.to_s.should eql "440.0 t"
   end
