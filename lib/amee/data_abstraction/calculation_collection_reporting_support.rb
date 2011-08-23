@@ -253,23 +253,3 @@ module AMEE
     
   end
 end
-
-class AMEE::DataAbstraction::OngoingCalculation
-
-  def ==(other_calc)
-    !terms.inject(false) do |boolean,term|
-      boolean || term != other_calc[term.label]
-    end && label == other_calc.label
-  end
-
-end
-
-class AMEE::DataAbstraction::Term
-
-  def ==(other_term)
-    !TermsList::TermProperties.inject(false) do |boolean,prop|
-      boolean || self.send(prop) != other_term.send(prop)
-    end
-  end
-
-end

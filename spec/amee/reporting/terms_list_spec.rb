@@ -185,11 +185,11 @@ describe TermsList do
   end
 
   it "should return median of numeric list" do
-    @list.co2.median.to_s.should eql "480 t"
+    @list.co2.median.to_s.should eql "480.0 t"
   end
 
   it "should return median of numeric list" do
-    @list.usage.median.to_s.should eql "1000 kWh"
+    @list.usage.median.to_s.should eql "1000.0 kWh"
   end
 
   it "should return median of non-numeric list" do
@@ -240,7 +240,7 @@ describe TermsList do
 
   it "should return mode of numeric list" do
     @list.usage.first.value 1000
-    @list.usage.mode.to_s.should eql "1000 kWh"
+    @list.usage.mode.to_s.should eql "1000.0 kWh"
   end
 
   it "should discover predominant unit" do
