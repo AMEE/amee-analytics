@@ -53,6 +53,15 @@ module AMEE
         map(&:label).uniq
       end
 
+      def +(other_calc_coll)
+        self.class.new(self.to_a + other_calc_coll.to_a)
+      end
+
+      def -(other_calc_coll)
+        other_calc_coll = [other_calc_coll].flatten
+        self.delete_if { |calc| other_calc_coll.include?(calc) }
+      end
+
       # Similar to <tt>#sort_by!</tt> but returns a new instance of
       # <i>CalculationCollection</i> arranged according to the values on the
       # term labelled <tt>term</tt>. E.g.
@@ -128,6 +137,28 @@ module AMEE
         replace(new_calcs)
       end
 
+      # Returns an array of instances of the <tt>Result</tt> class representing the
+      # sums of all outputs represented within the collection
+      #
+      def sum_all_outputs
+        TermsList.new(terms.outputs.visible.labels.uniq.map { |o| send(o).sum })
+      end
+
+      # Returns a new instance of the class <tt>TermsList</tt> representing either
+      # CO2 or CO2e outputs from each calculation
+      #
+      def co2_or_co2e_outputs
+        terms = TermsList.new
+        each do |calculation|
+          if calculation['co2e']
+            terms << calculation['co2e']
+          elsif calculation.outputs.visible.labels.size == 1 && calculation.outputs.visible.labels.first == :co2
+            terms << calculation['co2']
+          end
+        end
+        return terms
+      end
+
       # Call the <tt>#calculate!</tt> method on all calculations contained within
       # <tt>self</tt>.
       #
@@ -164,10 +195,22 @@ module AMEE
         terms.type
       end
 
+      def respond_to?(method)
+        if terms.labels.include? method.to_sym
+          return true
+        elsif method.to_s =~ /sort_by_(.*)!/ and terms.labels.include? $1.to_sym
+          return true
+        elsif method.to_s =~ /sort_by_(.*)/ and terms.labels.include? $1.to_sym
+          return true
+        else
+          super
+        end
+      end
+
       # Syntactic sugar for several instance methods.
       #
       # ---
-      # 
+      #
       # Call a method on <tt>self</tt> which named after a specific term label
       # contained with an associated calculation and return an instance of the
       # <tt>TermsList</tt> class contain each of those terms. E.g.,
@@ -209,4 +252,24 @@ module AMEE
     end
     
   end
+end
+
+class AMEE::DataAbstraction::OngoingCalculation
+
+  def ==(other_calc)
+    !terms.inject(false) do |boolean,term|
+      boolean || term != other_calc[term.label]
+    end && label == other_calc.label
+  end
+
+end
+
+class AMEE::DataAbstraction::Term
+
+  def ==(other_term)
+    !TermsList::TermProperties.inject(false) do |boolean,prop|
+      boolean || self.send(prop) != other_term.send(prop)
+    end
+  end
+
 end

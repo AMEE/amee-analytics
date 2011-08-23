@@ -256,7 +256,7 @@ describe TermsList do
     @list.co2.each {|term| term.per_unit 'h'}
     @list.usage.each {|term| term.per_unit 'm^2'}
     @list.co2.predominant_per_unit.should eql 'h'
-    @list.usage.predominant_per_unit.should eql 'm^2'
+    @list.usage.predominant_per_unit.should eql 'm²'
     @list.co2.first.per_unit 'min'
     @list.co2.predominant_per_unit.should eql 'h'
     @list.co2.last.per_unit 'min'
@@ -339,7 +339,91 @@ describe TermsList do
     @list=@list.co2.numeric_terms.should be_a TermsList
   end
 
+  it "should add TermsLists" do
+    calcs = []
+    calcs << add_elec_calc(500,240)
+    calcs << add_elec_calc(1000,480)
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list1 = @coll.usage
+    @list1.should be_a TermsList
+    @list1.size.should eql 3
+    @list2 = @coll.co2
+    @list2.should be_a TermsList
+    @list2.size.should eql 3
+    @list3 = @list1 + @list2
+    @list3.should be_a TermsList
+    @list3.size.should eql 6
+  end
 
-  
+  it "should subtract TermsLists" do
+    calcs = []
+    calcs << add_elec_calc(500,240)
+    calcs << add_elec_calc(1000,480)
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list1 = @coll.usage
+    @list1.should be_a TermsList
+    @list1.size.should eql 3
+    calcs = []
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list2 = @coll.usage
+    @list2.should be_a TermsList
+    @list2.size.should eql 1
+    @list3 = @list1 - @list2
+    @list3.should be_a TermsList
+    @list3.size.should eql 2
+  end
+
+  it "should add to TermsList using += syntax" do
+    @coll = CalculationCollection.new
+    @coll << add_transport_calc(500,240)
+    @list = TermsList.new
+    @list.should be_a TermsList
+    @list.size.should eql 0
+    @list += @coll.distance
+    @list.should be_a TermsList
+    @list.size.should eql 1
+    @list += @coll.co2
+    @list.should be_a TermsList
+    @list.size.should eql 2
+  end
+
+  it "should subtract from calculation collection using -= syntax" do
+    @coll = CalculationCollection.new
+    calc = add_transport_calc(500,240)
+    @list = TermsList.new
+    @list.should be_a TermsList
+    @list.size.should eql 0
+    @list += calc.terms
+    @list.size.should eql 5
+    @list -= calc['distance']
+    @list.should be_a TermsList
+    @list.size.should eql 4
+    @list -= calc['co2']
+    @list.should be_a TermsList
+    @list.size.should eql 3
+  end
+
+  it "should return representations of each unique term" do
+    terms = @coll.terms.uniq
+    terms.should be_a TermsList
+    terms.size.should eql 3
+    terms.labels.map(&:to_s).sort.should eql ['co2','country','usage']
+  end
+
+  it "should respond to dynamic term methods" do
+    @coll.terms.respond_to?(:co2).should be_true
+    @coll.terms.respond_to?(:usage).should be_true
+    @coll.terms.respond_to?(:distance).should be_false
+  end
+
+  it "should respond to dynamic sort methods" do
+    @coll.terms.respond_to?(:sort_by_value).should be_true
+    @coll.terms.respond_to?(:sort_by_unit!).should be_true
+    @coll.terms.respond_to?(:sort_by_volume).should be_false
+  end
+
 end
 

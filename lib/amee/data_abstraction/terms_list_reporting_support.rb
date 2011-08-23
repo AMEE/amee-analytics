@@ -29,6 +29,10 @@ module AMEE
     # methods for handling collections of calculations.
     #
     module TermsListReportingSupport
+      
+      def name
+        first.name unless heterogeneous?
+      end
 
       # Returns <tt>true</tt> if all terms within the list have the same label.
       # Otherwise, returns <tt>false</tt>.
@@ -84,6 +88,21 @@ module AMEE
       #
       def label
         first.label unless heterogeneous?
+      end
+
+      def +(other_list)
+        self.class.new(self.to_a + other_list.to_a)
+      end
+
+      def -(other_list)
+        other_list = [other_list].flatten
+        self.delete_if { |term| other_list.include?(term) }
+      end
+
+      def uniq
+        labels = self.labels.uniq
+        terms = labels.map {|label| find { |term| term.label == label } }
+        TermsList.new(terms)
       end
 
       # Returns the label of the unit which is predominantly used across all terms
@@ -178,7 +197,8 @@ module AMEE
         value = numeric_terms.standardize_units(unit,per_unit).inject(0.0) do |sum,term|
           sum + term.value
         end
-        initialize_result(label,value,unit,per_unit)
+        template = self
+        Result.new { label template.label; value value; unit unit; per_unit per_unit; name template.name }
       end
 
       # Returns a new instance of <i>Result</i> which represents the mean of all
@@ -195,7 +215,7 @@ module AMEE
       def mean(unit=nil,per_unit=nil)
         list = numeric_terms
         sum = list.sum(unit,per_unit)
-        initialize_result(sum.label,(sum.value/list.size),sum.unit,sum.per_unit)
+        Result.new { label sum.label; value (sum.value/list.size); unit sum.unit; per_unit sum.per_unit; name sum.name }
       end
 
       # Returns a representation of the term with most prevalent value in
@@ -284,6 +304,18 @@ module AMEE
       #
       def type
         TermsList.new select{ |x| x.label == :type }
+      end
+
+      def respond_to?(method)
+        if labels.include? method.to_sym
+          return true
+        elsif method.to_s =~ /sort_by_(.*)!/ and self.class::TermProperties.include? $1.to_sym
+          return true
+        elsif method.to_s =~ /sort_by_(.*)/ and self.class::TermProperties.include? $1.to_sym
+          return true
+        else
+          super
+        end
       end
 
       # Syntactic sugar for several instance methods.
