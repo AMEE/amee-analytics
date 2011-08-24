@@ -1,19 +1,19 @@
 require 'rubygems'
 require 'spec'
 
-require 'amee-reporting'
+require 'amee-analytics'
 require 'amee-data-persistence'
 require 'amee/data_abstraction/persistence_support.rb'
-require 'amee/data_abstraction/calculation_collection_reporting_support'
-require 'amee/data_abstraction/terms_list_reporting_support'
-require 'amee/data_abstraction/term_reporting_support'
+require 'amee/data_abstraction/calculation_collection_analytics_support'
+require 'amee/data_abstraction/terms_list_analytics_support'
+require 'amee/data_abstraction/term_analytics_support'
 
 AMEE::DataAbstraction::OngoingCalculation.class_eval {
   include AMEE::DataAbstraction::PersistenceSupport
 }
-AMEE::DataAbstraction::CalculationCollection.class_eval { include AMEE::DataAbstraction::CalculationCollectionReportingSupport }
-AMEE::DataAbstraction::TermsList.class_eval { include AMEE::DataAbstraction::TermsListReportingSupport }
-AMEE::DataAbstraction::Term.class_eval { include AMEE::DataAbstraction::TermReportingSupport }
+AMEE::DataAbstraction::CalculationCollection.class_eval { include AMEE::DataAbstraction::CalculationCollectionAnalyticsSupport }
+AMEE::DataAbstraction::TermsList.class_eval { include AMEE::DataAbstraction::TermsListAnalyticsSupport }
+AMEE::DataAbstraction::Term.class_eval { include AMEE::DataAbstraction::TermAnalyticsSupport }
 
 RAILS_ROOT = '.'
 

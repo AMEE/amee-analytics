@@ -20,7 +20,7 @@
 #             TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #             SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-# :title: Module: AMEE::DataAbstraction::TermListReportingSupport
+# :title: Module: AMEE::DataAbstraction::TermsListAnalyticsSupport
 
 module AMEE
   module DataAbstraction
@@ -28,7 +28,7 @@ module AMEE
     # Mixin module for the <i>AMEE::DataAbstraction::Term</i> class, providing
     # methods for handling collections of calculations.
     #
-    module TermsListReportingSupport
+    module TermsListAnalyticsSupport
       
       def name
         first.name unless heterogeneous?
@@ -99,7 +99,7 @@ module AMEE
         self.delete_if { |term| other_list.include?(term) }
       end
 
-      def uniq
+      def first_of_each_type
         labels = self.labels.uniq
         terms = labels.map {|label| find { |term| term.label == label } }
         TermsList.new(terms)

@@ -61,33 +61,33 @@ analytical operation (e.g. sum, mean) complete with label, value, unit, etc...
   # Dynamic label-derived method returns TermsList of the named term from each
   # calculation in the set
 
-  my_calculations.country           #=> <AMEE::DataAbstraction::TermsList ... >
+  my_calculations.country #=> <AMEE::DataAbstraction::TermsList ... >
 
-  my_calculations.energy            #=> <AMEE::DataAbstraction::TermsList ... >
+  my_calculations.energy #=> <AMEE::DataAbstraction::TermsList ... >
 
-  my_calculations.co2               #=> <AMEE::DataAbstraction::TermsList ... >
+  my_calculations.co2 #=> <AMEE::DataAbstraction::TermsList ... >
 
   # Analytical operations can be applied to lists of terms. These return new
   # objects, of the Result class. #to_s used here for illustrative purposes
-  
-  my_calculations.country.sum.to_s       #=> "0.0"
 
-  my_calculations.energy.sum.to_s        #=> "23456 kWh"
+  my_calculations.country.sum.to_s #=> "0.0"
 
-  my_calculations.co2.sum.to_s           #=> "12345 kg"
+  my_calculations.energy.sum.to_s #=> "23456 kWh"
 
-  my_calculations.co2.sum(:lb).to_s      #=> "23456 lb"
+  my_calculations.co2.sum.to_s #=> "12345 kg"
 
-  my_calculations.country.mode.to_s      #=> "Sweden"
+  my_calculations.co2.sum(:lb).to_s #=> "23456 lb"
 
-  my_calculations.co2.mean.to_s          #=> "4512.5 kg"
+  my_calculations.country.mode.to_s #=> "Sweden"
 
-  my_calculations.co2.mean('t').to_s     #=> "4.5125 t"
+  my_calculations.co2.mean.to_s #=> "4512.5 kg"
 
-  my_calculations.co2.median.to_s        #=> "4567 kg"
+  my_calculations.co2.mean('t').to_s #=> "4.5125 t"
 
-  my_calculations.co2.predominant_unit   #=> "kg"
+  my_calculations.co2.median.to_s #=> "4567 kg"
 
-  my_calculations.sort_by_co2            #=> <AMEE::DataAbstraction::CalculationCollection ... >
+  my_calculations.co2.predominant_unit #=> "kg"
 
-  my_calculations.sort_by_co2!           #=> <AMEE::DataAbstraction::CalculationCollection ... >
+  my_calculations.sort_by_co2 #=> <AMEE::DataAbstraction::CalculationCollection ... >
+
+  my_calculations.sort_by_co2! #=> <AMEE::DataAbstraction::CalculationCollection ... >

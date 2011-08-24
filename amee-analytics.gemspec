@@ -1,7 +1,7 @@
 require 'rake'
 
 Gem::Specification.new do |s|
-  s.name = "amee-reporting"
+  s.name = "amee-analytics"
   s.version = '1.0.0.rc1'
   s.date = "2011-05-26"
   s.summary = ""

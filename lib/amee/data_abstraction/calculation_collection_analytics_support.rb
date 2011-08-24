@@ -20,7 +20,7 @@
 #             TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #             SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-# :title: Module: AMEE::DataAbstraction::CalculationCollectionReportingSupport
+# :title: Module: AMEE::DataAbstraction::CalculationCollectionAnalyticsSupport
 
 module AMEE
   module DataAbstraction
@@ -28,7 +28,7 @@ module AMEE
     # Mixin module for the <i>AMEE::DataAbstraction::CalculationCollection</i>
     # class, providing methods for handling collections of calculations.
     #
-    module CalculationCollectionReportingSupport
+    module CalculationCollectionAnalyticsSupport
 
       # Returns <tt>true</tt> if all calculations in <tt>self</tt> are
       # representatives of the same prototype calculation. Otherwise,

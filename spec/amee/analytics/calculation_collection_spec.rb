@@ -53,7 +53,7 @@ describe CalculationCollection do
     @coll.co2.mean.to_s.should eql "440.0 t"
     @coll.usage.sum.to_s.should eql "2734.0 kWh"
   end
-  
+
   it "should sum term values with heterogeneous calcs" do
     @coll << add_transport_calc(1000,231)
     @coll.co2.sum.to_s.should eql "1551.0 t"
@@ -194,4 +194,3 @@ describe CalculationCollection do
   end
 
 end
-

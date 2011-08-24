@@ -20,7 +20,7 @@
 #             TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #             SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-# :title: Module: AMEE::DataAbstraction::TermReportingSupport
+# :title: Module: AMEE::DataAbstraction::TermAnalyticsSupport
 
 module AMEE
   module DataAbstraction
@@ -28,7 +28,7 @@ module AMEE
     # Mixin module for the <i>AMEE::DataAbstraction::Term</i> class, providing
     # methods for handling collections of calculations.
     #
-    module TermReportingSupport
+    module TermAnalyticsSupport
 
       # Returns an instance of <i>Result</i> based upon the attributes of
       # <tt>self</tt>.

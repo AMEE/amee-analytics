@@ -43,7 +43,7 @@ describe TermsList do
     @list.co2.should be_homogeneous_units
     @list.co2.should be_homogeneous_per_units
   end
-  
+
   it "should recognize non-consistent units" do
     @list.co2.first.unit 'lb'
     @list.co2[1].per_unit 'h'
@@ -65,7 +65,7 @@ describe TermsList do
     list = @list.co2.standardize_units
     list.should be_homogeneous
     list.should be_homogeneous_units
-    list.first.unit.label.should eql  't'
+    list.first.unit.label.should eql 't'
     list.first.value.should be_close 0.1088621688,0.001
   end
 
@@ -78,7 +78,7 @@ describe TermsList do
     list = @list.co2.standardize_units
     list.should be_homogeneous
     list.should be_homogeneous_per_units
-    list.first.per_unit.label.should eql  'h'
+    list.first.per_unit.label.should eql 'h'
     list.first.value.should be_close 14400,0.001
   end
 
@@ -95,7 +95,7 @@ describe TermsList do
     list.should be_homogeneous_units
     list.should be_homogeneous_per_units
     list.first.unit.label.should eql 't'
-    list.first.per_unit.label.should eql  'h'
+    list.first.per_unit.label.should eql 'h'
     list.first.value.should be_close 6.531730128,0.001
   end
 
@@ -108,8 +108,8 @@ describe TermsList do
     list = @list.co2.standardize_units(:lb)
     list.should be_homogeneous
     list.should be_homogeneous_units
-    list.first.unit.label.should eql  'lb'
-    list[1].unit.label.should eql  'lb'
+    list.first.unit.label.should eql 'lb'
+    list[1].unit.label.should eql 'lb'
     list.first.value.should eql 240.0
     list[1].value.should be_close 1058218.85848741,0.001
   end
@@ -125,7 +125,7 @@ describe TermsList do
     list.should be_homogeneous
     list.should be_homogeneous_per_units
     list.first.per_unit.label.should eql 'min'
-    list[1].per_unit.label.should eql  'min'
+    list[1].per_unit.label.should eql 'min'
     list.first.value.should eql 240.0
     list[1].value.should be_close 8,0.001
   end
@@ -146,7 +146,7 @@ describe TermsList do
     list.first.unit.label.should eql 'lb'
     list.first.per_unit.label.should eql 'min'
     list[1].unit.label.should eql 'lb'
-    list[1].per_unit.label.should eql  'min'
+    list[1].per_unit.label.should eql 'min'
     list.first.value.should eql 240.0
     list[1].value.should be_close 17636.9809747902,0.001
   end
@@ -407,7 +407,7 @@ describe TermsList do
   end
 
   it "should return representations of each unique term" do
-    terms = @coll.terms.uniq
+    terms = @coll.terms.first_of_each_type
     terms.should be_a TermsList
     terms.size.should eql 3
     terms.labels.map(&:to_s).sort.should eql ['co2','country','usage']
@@ -426,4 +426,3 @@ describe TermsList do
   end
 
 end
-
