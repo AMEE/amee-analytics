@@ -69,7 +69,7 @@ analytical operation (e.g. sum, mean) complete with label, value, unit, etc...
 
   # Analytical operations can be applied to lists of terms. These return new
   # objects, of the Result class. #to_s used here for illustrative purposes
-
+  
   my_calculations.country.sum.to_s       #=> "0.0"
 
   my_calculations.energy.sum.to_s        #=> "23456 kWh"
