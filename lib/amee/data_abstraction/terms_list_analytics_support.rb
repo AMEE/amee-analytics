@@ -31,7 +31,7 @@ module AMEE
     module TermsListAnalyticsSupport
       
       def name
-        first.name unless heterogeneous?
+        first.name if analogous?
       end
 
       # Returns <tt>true</tt> if all terms within the list have the same label.
@@ -87,7 +87,7 @@ module AMEE
       # if they are all the same. Otherwise, returns <tt>nil</tt>.
       #
       def label
-        first.label unless heterogeneous?
+        first.label if analogous?
       end
 
       def +(other_list)
