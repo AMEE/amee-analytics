@@ -43,7 +43,7 @@ describe TermsList do
     @list.co2.should be_homogeneous_units
     @list.co2.should be_homogeneous_per_units
   end
-  
+
   it "should recognize non-consistent units" do
     @list.co2.first.unit 'lb'
     @list.co2[1].per_unit 'h'
@@ -65,7 +65,7 @@ describe TermsList do
     list = @list.co2.standardize_units
     list.should be_homogeneous
     list.should be_homogeneous_units
-    list.first.unit.label.should eql  't'
+    list.first.unit.label.should eql 't'
     list.first.value.should be_close 0.1088621688,0.001
   end
 
@@ -78,7 +78,7 @@ describe TermsList do
     list = @list.co2.standardize_units
     list.should be_homogeneous
     list.should be_homogeneous_per_units
-    list.first.per_unit.label.should eql  'h'
+    list.first.per_unit.label.should eql 'h'
     list.first.value.should be_close 14400,0.001
   end
 
@@ -95,7 +95,7 @@ describe TermsList do
     list.should be_homogeneous_units
     list.should be_homogeneous_per_units
     list.first.unit.label.should eql 't'
-    list.first.per_unit.label.should eql  'h'
+    list.first.per_unit.label.should eql 'h'
     list.first.value.should be_close 6.531730128,0.001
   end
 
@@ -108,8 +108,8 @@ describe TermsList do
     list = @list.co2.standardize_units(:lb)
     list.should be_homogeneous
     list.should be_homogeneous_units
-    list.first.unit.label.should eql  'lb'
-    list[1].unit.label.should eql  'lb'
+    list.first.unit.label.should eql 'lb'
+    list[1].unit.label.should eql 'lb'
     list.first.value.should eql 240.0
     list[1].value.should be_close 1058218.85848741,0.001
   end
@@ -125,7 +125,7 @@ describe TermsList do
     list.should be_homogeneous
     list.should be_homogeneous_per_units
     list.first.per_unit.label.should eql 'min'
-    list[1].per_unit.label.should eql  'min'
+    list[1].per_unit.label.should eql 'min'
     list.first.value.should eql 240.0
     list[1].value.should be_close 8,0.001
   end
@@ -146,7 +146,7 @@ describe TermsList do
     list.first.unit.label.should eql 'lb'
     list.first.per_unit.label.should eql 'min'
     list[1].unit.label.should eql 'lb'
-    list[1].per_unit.label.should eql  'min'
+    list[1].per_unit.label.should eql 'min'
     list.first.value.should eql 240.0
     list[1].value.should be_close 17636.9809747902,0.001
   end
@@ -169,6 +169,10 @@ describe TermsList do
     @list.co2.sum(:lb).to_s.should eql "2381521.54102592 lb"
   end
 
+  it "should return 0.0 if no numerical term values found" do
+    @list.country.sum.to_s.should eql "0.0"
+  end
+
   it "should average terms" do
     @list.co2.mean.to_s.should eql "440.0 t"
   end
@@ -181,11 +185,11 @@ describe TermsList do
   end
 
   it "should return median of numeric list" do
-    @list.co2.median.to_s.should eql "480 t"
+    @list.co2.median.to_s.should eql "480.0 t"
   end
 
   it "should return median of numeric list" do
-    @list.usage.median.to_s.should eql "1000 kWh"
+    @list.usage.median.to_s.should eql "1000.0 kWh"
   end
 
   it "should return median of non-numeric list" do
@@ -236,7 +240,7 @@ describe TermsList do
 
   it "should return mode of numeric list" do
     @list.usage.first.value 1000
-    @list.usage.mode.to_s.should eql "1000 kWh"
+    @list.usage.mode.to_s.should eql "1000.0 kWh"
   end
 
   it "should discover predominant unit" do
@@ -252,7 +256,7 @@ describe TermsList do
     @list.co2.each {|term| term.per_unit 'h'}
     @list.usage.each {|term| term.per_unit 'm^2'}
     @list.co2.predominant_per_unit.should eql 'h'
-    @list.usage.predominant_per_unit.should eql 'm^2'
+    @list.usage.predominant_per_unit.should eql 'm²'
     @list.co2.first.per_unit 'min'
     @list.co2.predominant_per_unit.should eql 'h'
     @list.co2.last.per_unit 'min'
@@ -335,7 +339,90 @@ describe TermsList do
     @list=@list.co2.numeric_terms.should be_a TermsList
   end
 
+  it "should add TermsLists" do
+    calcs = []
+    calcs << add_elec_calc(500,240)
+    calcs << add_elec_calc(1000,480)
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list1 = @coll.usage
+    @list1.should be_a TermsList
+    @list1.size.should eql 3
+    @list2 = @coll.co2
+    @list2.should be_a TermsList
+    @list2.size.should eql 3
+    @list3 = @list1 + @list2
+    @list3.should be_a TermsList
+    @list3.size.should eql 6
+  end
 
-  
+  it "should subtract TermsLists" do
+    calcs = []
+    calcs << add_elec_calc(500,240)
+    calcs << add_elec_calc(1000,480)
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list1 = @coll.usage
+    @list1.should be_a TermsList
+    @list1.size.should eql 3
+    calcs = []
+    calcs << add_elec_calc(1234,600)
+    @coll = CalculationCollection.new calcs
+    @list2 = @coll.usage
+    @list2.should be_a TermsList
+    @list2.size.should eql 1
+    @list3 = @list1 - @list2
+    @list3.should be_a TermsList
+    @list3.size.should eql 2
+  end
+
+  it "should add to TermsList using += syntax" do
+    @coll = CalculationCollection.new
+    @coll << add_transport_calc(500,240)
+    @list = TermsList.new
+    @list.should be_a TermsList
+    @list.size.should eql 0
+    @list += @coll.distance
+    @list.should be_a TermsList
+    @list.size.should eql 1
+    @list += @coll.co2
+    @list.should be_a TermsList
+    @list.size.should eql 2
+  end
+
+  it "should subtract from calculation collection using -= syntax" do
+    @coll = CalculationCollection.new
+    calc = add_transport_calc(500,240)
+    @list = TermsList.new
+    @list.should be_a TermsList
+    @list.size.should eql 0
+    @list += calc.terms
+    @list.size.should eql 5
+    @list -= calc['distance']
+    @list.should be_a TermsList
+    @list.size.should eql 4
+    @list -= calc['co2']
+    @list.should be_a TermsList
+    @list.size.should eql 3
+  end
+
+  it "should return representations of each unique term" do
+    terms = @coll.terms.first_of_each_type
+    terms.should be_a TermsList
+    terms.size.should eql 3
+    terms.labels.map(&:to_s).sort.should eql ['co2','country','usage']
+  end
+
+  it "should respond to dynamic term methods" do
+    @coll.terms.respond_to?(:co2).should be_true
+    @coll.terms.respond_to?(:usage).should be_true
+    @coll.terms.respond_to?(:distance).should be_false
+  end
+
+  it "should respond to dynamic sort methods" do
+    @coll.terms.respond_to?(:sort_by_value).should be_true
+    @coll.terms.respond_to?(:sort_by_unit!).should be_true
+    @coll.terms.respond_to?(:sort_by_volume).should be_false
+  end
+
 end
-
