@@ -1,6 +1,6 @@
 == amee-analytics
 
-The amee-reporting gem provides support for handling collections of the class
+The amee-analytics gem provides support for handling collections of the class
 <i>AMEE::DataAbstraction::OngoingCalculation</i> and performing analytical
 operations across the collection.
 
@@ -26,9 +26,9 @@ Documentation: http://rubydoc.info/gems/amee-analytics
  All gem requirements should be installed as part of the rubygems installation process
  above, but are listed here for completeness.
 
- * amee-data-abstraction >= 1.0.0
- * amee-data-persistence >= 1.0.0
-
+ * amee-data-abstraction ~> 1.1
+ * amee-data-persistence ~> 1.1
+ 
 == USAGE
 
 The library extends a number of classes within the <i>AMEE::DataAbstraction</i>
@@ -50,15 +50,14 @@ term value attribute accordingly), and is used by the operations provided in
 <i>CalculationCollectionReportingSupport</i> and <i>TermsListReportingSupport</i>.
 
 4. A new subclass of <i>AMEE::DataAbstraction::Term</i> is defined, <i>Result</i>.
-This provides a simple container for returing the result of a <i>TermsList</i>
+This provides a simple container for returning the result of a <i>TermsList</i>
 analytical operation (e.g. sum, mean) complete with label, value, unit, etc...
 
 =Example usage
 
   # find method returns instance of CalculationCollection
   my_calculations = OngoingCalculation.find_by_type(:all, :electricity)
-
-                                    #=> <AMEE::DataAbstraction::CalculationCollection ... >
+    #=> <AMEE::DataAbstraction::CalculationCollection ... >
 
   # Dynamic label-derived method returns TermsList of the named term from each
   # calculation in the set
