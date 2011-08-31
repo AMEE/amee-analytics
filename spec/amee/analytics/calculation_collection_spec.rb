@@ -62,26 +62,64 @@ describe CalculationCollection do
   end
 
   it "should sort self by specified term" do
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
+    # check order
+    @coll.first['co2'].value.should eql 240
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 600
+
+    # reverse and check order
     @coll.reverse!
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>]"
+    @coll.first['co2'].value.should eql 600
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 240
+
+    # sort by co2 and check order
     @coll.sort_by_co2!
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
+    @coll.first['co2'].value.should eql 240
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 600
+
+    # reverse and check order
     @coll.reverse!
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>]"
+    @coll.first['co2'].value.should eql 600
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 240
+
+    # sort by usage and check order
     @coll.sort_by_usage!
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
+    @coll.first['co2'].value.should eql 240
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 600
   end
 
   it "should sort by specified term and return new" do
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
+    # check order
+    @coll.first['co2'].value.should eql 240
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 600
+
+    # reverse and check order
     @coll.reverse!
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>]"
+    @coll.first['co2'].value.should eql 600
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 240
+
+    # instantiate new based on co2 and check order
     coll = @coll.sort_by_co2
-    coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
-    @coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>]"
+    coll.first['co2'].value.should eql 240
+    coll[1]['co2'].value.should eql 480
+    coll.last['co2'].value.should eql 600
+
+    # check reversed order of original
+    @coll.first['co2'].value.should eql 600
+    @coll[1]['co2'].value.should eql 480
+    @coll.last['co2'].value.should eql 240
+
+    # instantiate new based on usage and check order
     coll = @coll.sort_by_usage
-    coll.inspect.should eql "[<AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:500><Output label:co2, value:240>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1000><Output label:co2, value:480>, label: :electricity>, <AMEE::DataAbstraction::OngoingCalculation terms: <Drill label:country, value:\"Argentina\"><Profile label:usage, value:1234><Output label:co2, value:600>, label: :electricity>]"
+    coll.first['co2'].value.should eql 240
+    coll[1]['co2'].value.should eql 480
+    coll.last['co2'].value.should eql 600
   end
 
   it "should standardize units in place" do
