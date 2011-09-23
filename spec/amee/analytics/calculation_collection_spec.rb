@@ -48,7 +48,7 @@ describe CalculationCollection do
     terms.all? {|term| term.is_a? AMEE::DataAbstraction::Output }.should be_true
   end
 
-  it "should sum term values with homegeneous calcs" do
+  it "should sum term values with homogeneous calcs" do
     @coll.co2.sum.to_s.should eql "1320.0 t"
     @coll.co2.mean.to_s.should eql "440.0 t"
     @coll.usage.sum.to_s.should eql "2734.0 kWh"
@@ -120,6 +120,23 @@ describe CalculationCollection do
     coll.first['co2'].value.should eql 240
     coll[1]['co2'].value.should eql 480
     coll.last['co2'].value.should eql 600
+  end
+
+  it "should sort calcs considering differences in units" do
+    @coll.first['usage'].value.should eql 500
+    @coll.first['usage'].unit.label.should eql 'kWh'
+    @coll[1]['usage'].value.should eql 1000
+    @coll[1]['usage'].unit.label.should eql 'kWh'
+    @coll.last['usage'].unit 'J'
+    @coll.last['usage'].value.should eql 1234
+    @coll.last['usage'].unit.label.should eql 'J'
+    @coll.sort_by_usage!
+    @coll.first['usage'].value.should eql 1234
+    @coll.first['usage'].unit.label.should eql 'J'
+    @coll[1]['usage'].value.should eql 500
+    @coll[1]['usage'].unit.label.should eql 'kWh'
+    @coll.last['usage'].value.should eql 1000
+    @coll.last['usage'].unit.label.should eql 'kWh'
   end
 
   it "should standardize units in place" do
