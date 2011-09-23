@@ -250,11 +250,8 @@ module AMEE
         Result.new { label label; value value; unit unit; per_unit per_unit }
       end
 
-      # Sorts the terms list in place according to the term attribute indicated by
+      # Sorts the terms list in place according to the term attribute indiated by
       # <tt>attr</tt>, returning <tt>self</tt>.
-      #
-      # If differences in units exist between terms, sorting occur based on the
-      # absolute quantities implied.
       #
       #   my_terms_list.sort_by! :value
       #
@@ -266,37 +263,18 @@ module AMEE
 
       # Similar to <tt>#sort_by!</tt> but returns a new instance of
       # <i>TermsList</i> arranged according to the values on the
-      # attribute <tt>attr</tt>.
-      #
-      #
-      # If differences in units exist between terms, sorting occur based on the
-      # absolute quantities implied.
-      #
-      # E.g.
+      # attribute <tt>attr</tt>. E.g.
       #
       #   my_terms_list.sort_by :value
       #
       #                   #=> <AMEE::DataAbstraction::TermsList ... >
       #
       def sort_by(attr)
-
-        # 1. Remove unset terms before sort and append at end
-        #
-        # 2. Establish set terms
-        #
-        # 3. Zip together with corresponding standardized units list creating a
-        # list of Term pairs
-        #
-        # 4. Sort list according to standardized Terms
-        #
-        # 5. Return map of original (now sorted) Terms
-
-        unset_terms, set_terms = self.partition { |term| term.unset? || term.value.nil? }
-        standardized_set_terms = TermsList.new(set_terms).standardize_units
-        ordered_set_terms = set_terms.zip(standardized_set_terms).sort! do |term,other_term|
-          term[1].send(attr) <=> other_term[1].send(attr)
-        end.map {|term_array| term_array[0]}
-        TermsList.new(ordered_set_terms + unset_terms)
+        # Remove unset terms before sort and append at end
+        unset_terms = select { |term| term.unset? }
+        set_terms = select { |term| term.set? }
+        set_terms.sort! { |term,other_term| term.send(attr) <=> other_term.send(attr) }
+        TermsList.new(set_terms + unset_terms)
       end
 
       # Return an instance of <i>TermsList</i> containing only terms labelled

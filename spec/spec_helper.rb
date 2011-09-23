@@ -30,7 +30,7 @@ def initialize_calculation_set
         drill {
           label :country
           path 'country'
-          value 'Argentina'
+          fixed 'Argentina'
         }
         profile {
           label :usage
