@@ -335,6 +335,40 @@ describe TermsList do
     @list.last.value.should eql nil
   end
 
+  it "should return a sorted terms list considering differences in units" do
+    @list=@list.co2
+    @list.first.unit 't'
+    @list[1].unit 'lb'
+    @list.last.unit 'kg'
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 lb"
+    @list.last.to_s.should eql "600.0 kg"
+    @list.reverse!
+    @list.first.to_s.should_not eql "240.0 t"
+    @list.last.to_s.should_not eql "600.0 kg"
+    list = @list.sort_by_value
+    list.first.to_s.should eql "480.0 lb"
+    list[1].to_s.should eql "600.0 kg"
+    list.last.to_s.should eql "240.0 t"
+  end
+
+  it "should sort on non-numeric values" do
+    @list=@list.country
+    @list.first.value 'Zambia'
+    @list[1].value 'Bulgaria'
+    @list.last.value 'Mauritania'
+    @list.first.to_s.should eql 'Zambia'
+    @list[1].to_s.should eql 'Bulgaria'
+    @list.last.to_s.should eql 'Mauritania'
+    @list.reverse!
+    @list.first.to_s.should_not eql 'Zambia'
+    @list.last.to_s.should_not eql 'Mauritania'
+    list = @list.sort_by_value
+    list.first.to_s.should eql 'Bulgaria'
+    list[1].to_s.should eql 'Mauritania'
+    list.last.to_s.should eql'Zambia'
+  end
+
   it "should return a new TermList for numeric only terms" do
     @list=@list.co2.numeric_terms.should be_a TermsList
   end
