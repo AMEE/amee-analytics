@@ -5,7 +5,7 @@
 # :title: Module: AMEE::DataAbstraction::TermAnalyticsSupport
 
 module AMEE
-  module DataAbstraction
+  module Analytics
     
     # Mixin module for the <i>AMEE::DataAbstraction::Term</i> class, providing
     # methods for handling collections of calculations.
@@ -17,7 +17,7 @@ module AMEE
       #
       def to_result
         result_term = Result.new
-        TermsList::TermProperties.each do |attr|
+        AMEE::DataAbstraction::TermsList::TermProperties.each do |attr|
           result_term.send(attr, self.send(attr))
         end
         return result_term
