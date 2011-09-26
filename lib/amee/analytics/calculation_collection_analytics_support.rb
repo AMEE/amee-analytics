@@ -4,7 +4,7 @@
 # :title: Module: AMEE::DataAbstraction::CalculationCollectionAnalyticsSupport
 
 module AMEE
-  module DataAbstraction
+  module Analytics
 
     # Mixin module for the <i>AMEE::DataAbstraction::CalculationCollection</i>
     # class, providing methods for handling collections of calculations.
@@ -53,7 +53,7 @@ module AMEE
       #
       def sort_by(term)
         term = term.to_sym unless term.is_a? Symbol
-        CalculationCollection.new(send(term).sort_by(:value).map(&:parent))
+        AMEE::DataAbstraction::CalculationCollection.new(send(term).sort_by(:value).map(&:parent))
       end
 
       # Sorts the calculation collection in place according to the values on the
@@ -107,7 +107,7 @@ module AMEE
           calc.contents[term.label] = term
           calc
         end
-        CalculationCollection.new(new_calcs)
+        AMEE::DataAbstraction::CalculationCollection.new(new_calcs)
       end
 
       # Similar to <tt>#standardize_units</tt> but standardizes units in place,
@@ -122,14 +122,14 @@ module AMEE
       # sums of all outputs represented within the collection
       #
       def sum_all_outputs
-        TermsList.new(terms.outputs.visible.labels.uniq.map { |o| send(o).sum })
+        AMEE::DataAbstraction::TermsList.new(terms.outputs.visible.labels.uniq.map { |o| send(o).sum })
       end
 
       # Returns a new instance of the class <tt>TermsList</tt> representing either
       # CO2 or CO2e outputs from each calculation
       #
       def co2_or_co2e_outputs
-        terms = TermsList.new
+        terms = AMEE::DataAbstraction::TermsList.new
         each do |calculation|
           if calculation['co2e']
             terms << calculation['co2e']
@@ -158,10 +158,10 @@ module AMEE
       # <tt>self</tt>.
       #
       def terms
-        TermsList.new( (self.map { |calc| calc.terms.map { |term| term } }).flatten )
+        AMEE::DataAbstraction::TermsList.new( (self.map { |calc| calc.terms.map { |term| term } }).flatten )
       end
 
-      TermsList::Selectors.each do |sel|
+      AMEE::DataAbstraction::TermsList::Selectors.each do |sel|
         delegate sel,:to=>:terms
       end
 

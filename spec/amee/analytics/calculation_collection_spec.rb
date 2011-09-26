@@ -145,7 +145,7 @@ describe CalculationCollection do
     @coll.first['usage'].unit.label.should eql 'J'
     @coll.standardize_units!(:usage,:kWh)
     @coll.first['usage'].unit 'kWh'
-    @coll.first['usage'].value.should be_close 0.000138888888888889,0.000001
+    @coll.first['usage'].value.should be_within(0.000001).of(0.000138888888888889)
   end
 
   it "should standardize units returning new collection" do
@@ -153,7 +153,7 @@ describe CalculationCollection do
     @coll.first['co2'].unit.label.should eql 't'
     coll = @coll.standardize_units(:co2,:lb)
     coll.first['co2'].unit 'lb'
-    coll.first['co2'].value.should be_close 529109.429243706,0.01
+    coll.first['co2'].value.should be_within(0.01).of(529109.429243706)
   end
 
   it "should handle 'type' as a terms filter" do
@@ -202,11 +202,11 @@ describe CalculationCollection do
 
   it "should add to calculation collection using += syntax" do
     @coll = CalculationCollection.new
-    @coll += add_transport_calc(500,240)
+    @coll += [add_transport_calc(500,240)]
     @coll.should be_a CalculationCollection
-    @coll += add_transport_calc(1000,480)
+    @coll += [add_transport_calc(1000,480)]
     @coll.should be_a CalculationCollection
-    @coll += add_transport_calc(1234,600)
+    @coll += [add_transport_calc(1234,600)]
     @coll.should be_a CalculationCollection
     @coll.size.should eql 3
   end

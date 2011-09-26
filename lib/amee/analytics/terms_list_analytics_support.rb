@@ -5,7 +5,7 @@
 # :title: Module: AMEE::DataAbstraction::TermsListAnalyticsSupport
 
 module AMEE
-  module DataAbstraction
+  module Analytics
 
     # Mixin module for the <i>AMEE::DataAbstraction::Term</i> class, providing
     # methods for handling collections of calculations.
@@ -84,7 +84,7 @@ module AMEE
       def first_of_each_type
         labels = self.labels.uniq
         terms = labels.map {|label| find { |term| term.label == label } }
-        TermsList.new(terms)
+        AMEE::DataAbstraction::TermsList.new(terms)
       end
 
       # Returns the label of the unit which is predominantly used across all terms
@@ -133,7 +133,7 @@ module AMEE
       # operations on
       #
       def numeric_terms
-        TermsList.new select { |term| term.has_numeric_value? }
+        AMEE::DataAbstraction::TermsList.new select { |term| term.has_numeric_value? }
       end
 
       # Returns a new instance of <i>TermsList</i> with all units standardized and
@@ -159,7 +159,7 @@ module AMEE
         unit = predominant_unit if unit.nil?
         per_unit = predominant_per_unit if per_unit.nil?
         new_terms = map { |term| term.convert_unit(:unit => unit, :per_unit => per_unit) }
-        TermsList.new new_terms
+        AMEE::DataAbstraction::TermsList.new new_terms
       end
 
       # Returns a new instance of <i>Result</i> which represents the sum of all
@@ -217,7 +217,7 @@ module AMEE
         if max_groups.size == 1
           max_groups.first.first.to_result
         else
-          TermsList.new max_groups.map { |group| group.first.to_result }
+          AMEE::DataAbstraction::TermsList.new max_groups.map { |group| group.first.to_result }
         end
       end
 
@@ -279,7 +279,6 @@ module AMEE
       #                   #=> <AMEE::DataAbstraction::TermsList ... >
       #
       def sort_by(attr)
-
         # 1. Remove unset terms before sort and append at end
         #
         # 2. Establish set terms
@@ -307,7 +306,7 @@ module AMEE
       # dynamically retrieving a subset of terms according their labels.
       #
       def type
-        TermsList.new select{ |x| x.label == :type }
+        AMEE::DataAbstraction::TermsList.new select{ |x| x.label == :type }
       end
 
       def respond_to?(method)
@@ -354,7 +353,7 @@ module AMEE
       #
       def method_missing(method, *args, &block)
         if labels.include? method
-          TermsList.new select{ |x| x.label == method }
+          AMEE::DataAbstraction::TermsList.new select{ |x| x.label == method }
         elsif method.to_s =~ /sort_by_(.*)!/ and self.class::TermProperties.include? $1.to_sym
           sort_by! $1.to_sym
         elsif method.to_s =~ /sort_by_(.*)/ and self.class::TermProperties.include? $1.to_sym
