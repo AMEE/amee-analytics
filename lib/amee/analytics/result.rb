@@ -4,12 +4,12 @@
 # :title: Class AMEE::DataAbstraction::Result
 
 module AMEE
-  module DataAbstraction
+  module Analytics
 
     # Subclass of <tt>Term</tt> providing methods and attributes appropriate for
     # representing the results of cross calculation operations specifically
     #
-    class Result < Term
+    class Result < AMEE::DataAbstraction::Term
 
     end
   end

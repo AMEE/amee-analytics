@@ -48,7 +48,7 @@ describe CalculationCollection do
     terms.all? {|term| term.is_a? AMEE::DataAbstraction::Output }.should be_true
   end
 
-  it "should sum term values with homegeneous calcs" do
+  it "should sum term values with homogeneous calcs" do
     @coll.co2.sum.to_s.should eql "1320.0 t"
     @coll.co2.mean.to_s.should eql "440.0 t"
     @coll.usage.sum.to_s.should eql "2734.0 kWh"
@@ -122,13 +122,30 @@ describe CalculationCollection do
     coll.last['co2'].value.should eql 600
   end
 
+  it "should sort calcs considering differences in units" do
+    @coll.first['usage'].value.should eql 500
+    @coll.first['usage'].unit.label.should eql 'kWh'
+    @coll[1]['usage'].value.should eql 1000
+    @coll[1]['usage'].unit.label.should eql 'kWh'
+    @coll.last['usage'].unit 'J'
+    @coll.last['usage'].value.should eql 1234
+    @coll.last['usage'].unit.label.should eql 'J'
+    @coll.sort_by_usage!
+    @coll.first['usage'].value.should eql 1234
+    @coll.first['usage'].unit.label.should eql 'J'
+    @coll[1]['usage'].value.should eql 500
+    @coll[1]['usage'].unit.label.should eql 'kWh'
+    @coll.last['usage'].value.should eql 1000
+    @coll.last['usage'].unit.label.should eql 'kWh'
+  end
+
   it "should standardize units in place" do
     @coll.first['usage'].unit 'J'
     @coll.first['usage'].value.should eql 500
     @coll.first['usage'].unit.label.should eql 'J'
     @coll.standardize_units!(:usage,:kWh)
     @coll.first['usage'].unit 'kWh'
-    @coll.first['usage'].value.should be_close 0.000138888888888889,0.000001
+    @coll.first['usage'].value.should be_within(0.000001).of(0.000138888888888889)
   end
 
   it "should standardize units returning new collection" do
@@ -136,7 +153,7 @@ describe CalculationCollection do
     @coll.first['co2'].unit.label.should eql 't'
     coll = @coll.standardize_units(:co2,:lb)
     coll.first['co2'].unit 'lb'
-    coll.first['co2'].value.should be_close 529109.429243706,0.01
+    coll.first['co2'].value.should be_within(0.01).of(529109.429243706)
   end
 
   it "should handle 'type' as a terms filter" do
@@ -185,11 +202,11 @@ describe CalculationCollection do
 
   it "should add to calculation collection using += syntax" do
     @coll = CalculationCollection.new
-    @coll += add_transport_calc(500,240)
+    @coll += [add_transport_calc(500,240)]
     @coll.should be_a CalculationCollection
-    @coll += add_transport_calc(1000,480)
+    @coll += [add_transport_calc(1000,480)]
     @coll.should be_a CalculationCollection
-    @coll += add_transport_calc(1234,600)
+    @coll += [add_transport_calc(1234,600)]
     @coll.should be_a CalculationCollection
     @coll.size.should eql 3
   end
