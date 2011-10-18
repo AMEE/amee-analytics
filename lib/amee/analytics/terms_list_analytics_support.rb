@@ -250,6 +250,28 @@ module AMEE
         Result.new { label label; value value; unit unit; per_unit per_unit }
       end
 
+      # Move an individual term to a specified location (index) within the list.
+      # The specific term is selected on the basis of one of it's attributes values,
+      # with the attribute to use (e.g. :value, :unit) given by <tt>attr</attr>
+      # and value by <tt>value</tt>. The location within the list to move the term
+      # is given as an index integer value as the final argument.
+      #
+      def move_by(attr,value,index)
+        if attr == :unit || attr == :per_unit
+          value = Unit.for value
+        end
+        term = find {|t| t.send(attr) == value }
+        return if term.nil?
+        delete(term)
+        insert(index, term)
+      end
+
+      # Rotate the list terms by one element - shifts the first-placed term to the
+      # end of the list, advancing all terms forward by one place.
+      def rotate
+        push(self.shift)
+      end
+
       # Sorts the terms list in place according to the term attribute indicated by
       # <tt>attr</tt>, returning <tt>self</tt>.
       #

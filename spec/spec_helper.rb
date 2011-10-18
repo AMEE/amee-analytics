@@ -2,80 +2,31 @@ require 'rubygems'
 require 'rspec'
 require 'amee-analytics'
 
-RAILS_ROOT = '.'
+class Rails
+  def self.root
+    File.dirname(__FILE__) + '/fixtures'
+  end
+  def self.logger
+    nil
+  end
+end
 
 RSpec.configure do |config|
   config.mock_with :flexmock
-end
-
-def initialize_calculation_set
-  eval "Calculations = AMEE::DataAbstraction::CalculationSet.new {
-      calculation{
-        name 'Electricity'
-        label :electricity
-        path '/business/energy/electricity/grid'
-        drill {
-          label :country
-          path 'country'
-          value 'Argentina'
-        }
-        profile {
-          label :usage
-          name 'Electricity Used'
-          path 'energyPerTime'
-          default_unit :kWh
-        }
-        output {
-          label :co2
-          name 'Carbon Dioxide'
-          path :default
-          default_unit :t
-        }
-      }
-      calculation{
-        name 'Transport'
-        label :transport
-        path '/transport/defra/vehicle'
-        drill {
-          label :type
-          path 'type'
-          name 'Type'
-        }
-        drill {
-          label :size
-          path 'size'
-          name 'Size'
-        }
-        drill {
-          label :fuel
-          path 'fuel'
-          name 'Fuel'
-        }
-        profile {
-          label :distance
-          name 'distance'
-          path 'distance'
-          default_unit :km
-        }
-        output {
-          label :co2
-          name 'Carbon Dioxide'
-          path :default
-          default_unit :t
-        }
-      }
-    }"
+  config.before(:all) do
+    CalculationSet.find("calcs")
+  end
 end
 
 def add_elec_calc(act,res)
-  calc = Calculations[:electricity].begin_calculation
+  calc = CalculationSet.find("calcs")[:electricity].begin_calculation
   calc['usage'].value act
   calc['co2'].value res
   return calc
 end
 
 def add_transport_calc(act,res)
-  calc = Calculations[:transport].begin_calculation
+  calc = CalculationSet.find("calcs")[:transport].begin_calculation
   calc['distance'].value act
   calc['co2'].value res
   return calc
