@@ -3,7 +3,7 @@ require 'spec'
 
 require 'amee-analytics'
 require 'amee-data-persistence'
-require 'amee/data_abstraction/persistence_support.rb'
+require 'amee/data_abstraction/ongoing_calculation_persistence_support.rb'
 require 'amee/data_abstraction/calculation_collection_analytics_support'
 require 'amee/data_abstraction/terms_list_analytics_support'
 require 'amee/data_abstraction/term_analytics_support'
@@ -15,80 +15,31 @@ AMEE::DataAbstraction::CalculationCollection.class_eval { include AMEE::DataAbst
 AMEE::DataAbstraction::TermsList.class_eval { include AMEE::DataAbstraction::TermsListAnalyticsSupport }
 AMEE::DataAbstraction::Term.class_eval { include AMEE::DataAbstraction::TermAnalyticsSupport }
 
-RAILS_ROOT = '.'
+class Rails
+  def self.root
+    File.dirname(__FILE__) + '/fixtures'
+  end
+  def self.logger
+    nil
+  end
+end
 
 Spec::Runner.configure do |config|
   config.mock_with :flexmock
-end
-
-def initialize_calculation_set
-  eval "Calculations = AMEE::DataAbstraction::CalculationSet.new {
-      calculation{
-        name 'Electricity'
-        label :electricity
-        path '/business/energy/electricity/grid'
-        drill {
-          label :country
-          path 'country'
-          fixed 'Argentina'
-        }
-        profile {
-          label :usage
-          name 'Electricity Used'
-          path 'energyPerTime'
-          default_unit :kWh
-        }
-        output {
-          label :co2
-          name 'Carbon Dioxide'
-          path :default
-          default_unit :t
-        }
-      }
-      calculation{
-        name 'Transport'
-        label :transport
-        path '/transport/defra/vehicle'
-        drill {
-          label :type
-          path 'type'
-          name 'Type'
-        }
-        drill {
-          label :size
-          path 'size'
-          name 'Size'
-        }
-        drill {
-          label :fuel
-          path 'fuel'
-          name 'Fuel'
-        }
-        profile {
-          label :distance
-          name 'distance'
-          path 'distance'
-          default_unit :km
-        }
-        output {
-          label :co2
-          name 'Carbon Dioxide'
-          path :default
-          default_unit :t
-        }
-      }
-    }"
+  config.before(:all) do
+    CalculationSet.find("calcs")
+  end
 end
 
 def add_elec_calc(act,res)
-  calc = Calculations[:electricity].begin_calculation
+  calc = CalculationSet.find("calcs")[:electricity].begin_calculation
   calc['usage'].value act
   calc['co2'].value res
   return calc
 end
 
 def add_transport_calc(act,res)
-  calc = Calculations[:transport].begin_calculation
+  calc = CalculationSet.find("calcs")[:transport].begin_calculation
   calc['distance'].value act
   calc['co2'].value res
   return calc

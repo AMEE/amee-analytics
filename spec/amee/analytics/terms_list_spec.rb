@@ -5,7 +5,6 @@ include AMEE::DataAbstraction
 describe TermsList do
 
   before(:each) do
-    initialize_calculation_set
     calcs = []
     calcs << add_elec_calc(500,240)
     calcs << add_elec_calc(1000,480)
@@ -333,6 +332,90 @@ describe TermsList do
     @list[1].value.should eql nil
     @list[2].value.should eql nil
     @list.last.value.should eql nil
+  end
+
+  it "should return a sorted terms list considering differences in units" do
+    @list=@list.co2
+    @list.first.unit 't'
+    @list[1].unit 'lb'
+    @list.last.unit 'kg'
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 lb"
+    @list.last.to_s.should eql "600.0 kg"
+    @list.reverse!
+    @list.first.to_s.should_not eql "240.0 t"
+    @list.last.to_s.should_not eql "600.0 kg"
+    list = @list.sort_by_value
+    list.first.to_s.should eql "480.0 lb"
+    list[1].to_s.should eql "600.0 kg"
+    list.last.to_s.should eql "240.0 t"
+  end
+
+  it "should sort on non-numeric values" do
+    @list=@list.country
+    @list.first.value 'Zambia'
+    @list[1].value 'Bulgaria'
+    @list.last.value 'Mauritania'
+    @list.first.to_s.should eql 'Zambia'
+    @list[1].to_s.should eql 'Bulgaria'
+    @list.last.to_s.should eql 'Mauritania'
+    @list.reverse!
+    @list.first.to_s.should_not eql 'Zambia'
+    @list.last.to_s.should_not eql 'Mauritania'
+    list = @list.sort_by_value
+    list.first.to_s.should eql 'Bulgaria'
+    list[1].to_s.should eql 'Mauritania'
+    list.last.to_s.should eql'Zambia'
+  end
+
+  it "should move a term on the basis of value" do
+    @list=@list.co2
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 t"
+    @list.last.to_s.should eql "600.0 t"
+    @list.move_by(:value, 600.0,0)
+    @list.first.to_s.should eql "600.0 t"
+    @list[1].to_s.should eql "240.0 t"
+    @list.last.to_s.should eql "480.0 t"
+  end
+
+  it "should move a term on the basis of unit object" do
+    @list=@list.co2
+    @list.first.unit 't'
+    @list[1].unit 'lb'
+    @list.last.unit 'kg'
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 lb"
+    @list.last.to_s.should eql "600.0 kg"
+    @list.move_by(:unit, Unit.kg,1)
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "600.0 kg"
+    @list.last.to_s.should eql "480.0 lb"
+  end
+
+  it "should move a term on the basis of unit label" do
+    @list=@list.co2
+    @list.first.unit 't'
+    @list[1].unit 'lb'
+    @list.last.unit 'kg'
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 lb"
+    @list.last.to_s.should eql "600.0 kg"
+    @list.move_by(:unit, :t,-1)
+    @list.first.to_s.should eql "480.0 lb"
+    @list[1].to_s.should eql "600.0 kg"
+    @list.last.to_s.should eql "240.0 t"
+  end
+
+  it "should rotate terms" do
+    @list=@list.co2
+    @list.first.to_s.should eql "240.0 t"
+    @list[1].to_s.should eql "480.0 t"
+    @list.last.to_s.should eql "600.0 t"
+    @list.rotate
+    @list.first.to_s.should eql "480.0 t"
+    @list[1].to_s.should eql "600.0 t"
+    @list.last.to_s.should eql "240.0 t"
   end
 
   it "should return a new TermList for numeric only terms" do

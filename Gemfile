@@ -1,8 +1,8 @@
 source "http://rubygems.org"
 
 # Dependencies
-gem "amee-data-abstraction","~> 1.1"
-gem "amee-data-persistence","~> 1.1"
+gem "amee-data-abstraction","~> 1.3"
+gem "amee-data-persistence","~> 1.2"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
