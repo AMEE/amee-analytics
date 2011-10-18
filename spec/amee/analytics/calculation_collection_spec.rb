@@ -5,7 +5,6 @@ include AMEE::DataAbstraction
 describe CalculationCollection do
 
   before(:each) do
-    initialize_calculation_set
     @calcs = []
     @calcs << add_elec_calc(500,240)
     @calcs << add_elec_calc(1000,480)
