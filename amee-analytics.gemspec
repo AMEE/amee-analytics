@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amee-analytics}
-  s.version = "2.0.1"
+  s.version = "2.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["James Hetherington", "Andrew Berkeley", "James Smith", "George Palmer"]
-  s.date = %q{2011-09-29}
+  s.authors = [%q{James Hetherington}, %q{Andrew Berkeley}, %q{James Smith}, %q{George Palmer}]
+  s.date = %q{2011-10-19}
   s.description = %q{Part of the AMEE AppKit, this gem provides the ability to do mathmatical operations over a set of calculations}
   s.email = %q{help@amee.com}
   s.extra_rdoc_files = [
@@ -34,21 +34,22 @@ Gem::Specification.new do |s|
     "spec/amee/analytics/calculation_collection_spec.rb",
     "spec/amee/analytics/term_spec.rb",
     "spec/amee/analytics/terms_list_spec.rb",
+    "spec/fixtures/config/calculations/calcs.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/AMEE/amee-analytics}
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.licenses = [%q{MIT}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
   s.summary = %q{Analytics module for use with AMEE AppKit}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<amee-data-abstraction>, ["~> 2.0"])
-      s.add_runtime_dependency(%q<amee-data-persistence>, ["~> 2.0"])
+      s.add_runtime_dependency(%q<amee-data-abstraction>, ["~> 2.2"])
+      s.add_runtime_dependency(%q<amee-data-persistence>, ["~> 2.1"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_development_dependency(%q<rails>, ["~> 3.0.10"])
@@ -57,8 +58,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, [">= 0"])
     else
-      s.add_dependency(%q<amee-data-abstraction>, ["~> 2.0"])
-      s.add_dependency(%q<amee-data-persistence>, ["~> 2.0"])
+      s.add_dependency(%q<amee-data-abstraction>, ["~> 2.2"])
+      s.add_dependency(%q<amee-data-persistence>, ["~> 2.1"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
       s.add_dependency(%q<rails>, ["~> 3.0.10"])
@@ -68,8 +69,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rdoc>, [">= 0"])
     end
   else
-    s.add_dependency(%q<amee-data-abstraction>, ["~> 2.0"])
-    s.add_dependency(%q<amee-data-persistence>, ["~> 2.0"])
+    s.add_dependency(%q<amee-data-abstraction>, ["~> 2.2"])
+    s.add_dependency(%q<amee-data-persistence>, ["~> 2.1"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
     s.add_dependency(%q<rails>, ["~> 3.0.10"])
