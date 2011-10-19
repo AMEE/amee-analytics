@@ -6,16 +6,10 @@ class Rails
   def self.root
     File.dirname(__FILE__) + '/fixtures'
   end
-  def self.logger
-    nil
-  end
 end
 
 RSpec.configure do |config|
   config.mock_with :flexmock
-  config.before(:all) do
-    CalculationSet.find("calcs")
-  end
 end
 
 def add_elec_calc(act,res)

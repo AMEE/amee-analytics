@@ -1,8 +1,8 @@
 source "http://rubygems.org"
 
 # Dependencies
-gem "amee-data-abstraction","~> 2.0"
-gem "amee-data-persistence","~> 2.0"
+gem "amee-data-abstraction","~> 2.2"
+gem "amee-data-persistence","~> 2.1"
 
 group :development do
   gem "bundler", "~> 1.0.0"
