@@ -1,4 +1,10 @@
 = Changelog
 
+== 2.1.1
+  * Add module namespace to TermsList in TermsList sort_by method
+== 2.1.0
+  * Update to support new handling of calculation sets (amee-data-abstraction v2.2)
+== 2.0.0
+  * Upgrade to support Rails 3
 == 1.0.0
   * Initial public release

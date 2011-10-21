@@ -313,11 +313,11 @@ module AMEE
         # 5. Return map of original (now sorted) Terms
 
         unset_terms, set_terms = self.partition { |term| term.unset? || term.value.nil? }
-        standardized_set_terms = TermsList.new(set_terms).standardize_units
+        standardized_set_terms = AMEE::DataAbstraction::TermsList.new(set_terms).standardize_units
         ordered_set_terms = set_terms.zip(standardized_set_terms).sort! do |term,other_term|
           term[1].send(attr) <=> other_term[1].send(attr)
         end.map {|term_array| term_array[0]}
-        TermsList.new(ordered_set_terms + unset_terms)
+        AMEE::DataAbstraction::TermsList.new(ordered_set_terms + unset_terms)
       end
 
       # Return an instance of <i>TermsList</i> containing only terms labelled
