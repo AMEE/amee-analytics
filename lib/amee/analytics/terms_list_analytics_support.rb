@@ -154,8 +154,8 @@ module AMEE
       #   list.standardize_units(nil, 'BTU')      #=> <TermsList>
       #
       def standardize_units(unit=nil,per_unit=nil)
-        return self if homogeneous? and ((unit.nil? or (first.unit and first.unit.label == unit)) and
-           (per_unit.nil? or (first.per_unit and first.per_unit.label == per_unit)))
+        return self if homogeneous? && ((unit.nil? or (first.unit && first.unit.label == unit)) &&
+           (per_unit.nil? || (first.per_unit && first.per_unit.label == per_unit)))
         unit = predominant_unit if unit.nil?
         per_unit = predominant_per_unit if per_unit.nil?
         new_terms = map { |term| term.convert_unit(:unit => unit, :per_unit => per_unit) }

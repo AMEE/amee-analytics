@@ -102,12 +102,12 @@ module AMEE
       #
       def standardize_units(term,unit=nil,per_unit=nil)
         term = term.to_sym unless term.is_a? Symbol
-        new_calcs = send(term).standardize_units(unit,per_unit).map do |term|
+        send(term).standardize_units(unit,per_unit).map do |term|
           calc = term.parent
           calc.contents[term.label] = term
           calc
         end
-        AMEE::DataAbstraction::CalculationCollection.new(new_calcs)
+        AMEE::DataAbstraction::CalculationCollection.new(self)
       end
 
       # Similar to <tt>#standardize_units</tt> but standardizes units in place,

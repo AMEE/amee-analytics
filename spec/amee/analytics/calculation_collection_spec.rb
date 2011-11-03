@@ -155,6 +155,34 @@ describe CalculationCollection do
     coll.first['co2'].value.should be_within(0.01).of(529109.429243706)
   end
 
+  it "should standardize units in place and retain calcs missing term" do
+    @coll.first['usage'].unit 'J'
+    @coll.first['usage'].value.should eql 500
+    @coll.first['usage'].unit.label.should eql 'J'
+    pp @coll
+    @coll[1].contents.delete(:usage)
+    pp @coll
+    @coll.size.should eql 3
+    @coll.standardize_units!(:usage,:kWh)
+    pp @coll
+    @coll.first['usage'].unit 'kWh'
+    @coll.first['usage'].value.should be_within(0.000001).of(0.000138888888888889)
+    @coll[1].contents['usage'].should eql nil
+    @coll.size.should eql 3
+  end
+
+  it "should standardize units returning new collection" do
+    @coll.first['co2'].value.should eql 240
+    @coll.first['co2'].unit.label.should eql 't'
+    @coll[1].contents.delete(:co2)
+    @coll.size.should eql 3
+    coll = @coll.standardize_units(:co2,:lb)
+    coll.first['co2'].unit 'lb'
+    coll.first['co2'].value.should be_within(0.01).of(529109.429243706)
+    coll[1].contents['co2'].should eql nil
+    coll.size.should eql 3
+  end
+
   it "should handle 'type' as a terms filter" do
     calcs = []
     calcs << add_transport_calc(500,240)
