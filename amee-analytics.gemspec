@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amee-analytics}
-  s.version = "2.1.1"
+  s.version = "2.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["James Hetherington", "Andrew Berkeley", "James Smith", "George Palmer"]
-  s.date = %q{2011-10-21}
+  s.authors = [%q{James Hetherington}, %q{Andrew Berkeley}, %q{James Smith}, %q{George Palmer}]
+  s.date = %q{2011-11-03}
   s.description = %q{Part of the AMEE AppKit, this gem provides the ability to do mathmatical operations over a set of calculations}
   s.email = %q{help@amee.com}
   s.extra_rdoc_files = [
@@ -39,9 +39,9 @@ Gem::Specification.new do |s|
     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/AMEE/amee-analytics}
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.3}
+  s.licenses = [%q{MIT}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
   s.summary = %q{Analytics module for use with AMEE AppKit}
 
   if s.respond_to? :specification_version then
